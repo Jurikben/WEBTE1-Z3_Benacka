@@ -35,3 +35,29 @@ export async function getTodos(name) {
   const data = await getJson(studentUrl(name));
   return data.todos ?? [];
 }
+
+export function getTodo(name, id) {
+  return getJson(`${studentUrl(name)}/${id}`);
+}
+
+export function createTodo(name, todo) {
+  return getJson(studentUrl(name), "POST", todo);
+}
+
+export function updateTodo(name, id, todo) {
+  return getJson(`${studentUrl(name)}/${id}`, "PUT", todo);
+}
+
+export function deleteTodo(name, id) {
+  return getJson(`${studentUrl(name)}/${id}`, "DELETE");
+}
+
+export function setTodoFinished(name, id, isFinished) {
+  const action = isFinished ? "done" : "undone";
+  return getJson(`${studentUrl(name)}/${id}/${action}`, "PATCH");
+}
+
+export async function resetTodos(name) {
+  const data = await getJson(`${studentUrl(name)}/reset`, "POST");
+  return data.todos ?? [];
+}

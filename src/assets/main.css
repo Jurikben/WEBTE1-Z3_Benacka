@@ -118,7 +118,58 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-.todo-list {
+.feedback {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 10;
+  margin-block: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #e8f0fc;
+  border: 1px solid #c6d6ed;
+  border-radius: 0.35rem;
+}
+
+.feedback p {
+  margin-block: 0.25rem;
+}
+
+.list-actions, .section-heading, .todo-heading, .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.list-actions, .section-heading, .todo-heading {
+  justify-content: space-between;
+}
+
+.list-actions {
+  margin-block: 1rem;
+}
+
+.list-actions p, .section-heading h2, .todo-heading h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.todo-heading {
+  justify-content: start;
+  margin-bottom: 0.5rem;
+}
+
+.todo-filters, .form-dates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.todo-filters {
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  margin-top: 1rem;
+}
+
+.todo-items {
   display: grid;
   gap: 0.75rem;
   padding: 0;
@@ -134,8 +185,89 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-.todo-card h3, .todo-card p {
+.todo-card p {
   margin: 0 0 0.5rem;
+}
+
+.todo-description {
+  white-space: pre-wrap;
+}
+
+.todo-interval, .muted {
+  color: #42526a;
+}
+
+.status {
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.35rem;
+  color: #25456f;
+  background: #e8f0fc;
+  font-size: 0.875rem;
+}
+
+.is-finished .status {
+  color: #1b5a39;
+  background: #e3f4eb;
+}
+
+.is-overdue .status {
+  color: #7c3315;
+  background: #fceddf;
+}
+
+.button-secondary, .button-danger {
+  color: #25456f;
+  background: #fff;
+  border-color: #8798af;
+}
+
+.button-secondary:not(:disabled):hover {
+  color: #25456f;
+  background: #e8f0fc;
+}
+
+.button-danger {
+  color: #9c2424;
+  border-color: #c8a09e;
+}
+
+.button-danger:not(:disabled):hover {
+  color: #9c2424;
+  background: #faeaea;
+}
+
+.form-dialog {
+  width: min(100% - 2rem, 33rem);
+  max-height: calc(100dvh - 2rem);
+  padding: 1.25rem;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #8798af;
+  border-radius: 0.5rem;
+}
+
+.form-dialog::backdrop {
+  background: rgb(23 36 58 / 52%);
+}
+
+.form-dialog h2 {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+
+.form-dialog form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.form-dialog textarea {
+  resize: vertical;
 }
 
 .site-footer {
@@ -147,5 +279,9 @@ button:disabled {
 @media (max-width: 36rem) {
   .student-form button {
     margin-top: 0;
+  }
+
+  .todo-filters, .form-dates {
+    grid-template-columns: 1fr;
   }
 }
