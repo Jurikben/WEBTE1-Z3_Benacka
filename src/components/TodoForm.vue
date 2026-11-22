@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { fromApiDate, parseDateTimeInput, toDateTimeInput } from "../utils/dates.js";
+import { parseDateTimeInput, toDateTimeInput } from "../utils/dates.js";
 
 const props = defineProps({
   todo: { type: Object, default: null },
@@ -15,6 +15,7 @@ const dialog = ref(null);
 const dates = props.todo ?? props.initialDates;
 const initialFrom = dates ? toDateTimeInput(dates.date_from) : "";
 const initialTo = dates ? toDateTimeInput(dates.date_to) : "";
+const timeStep = initialFrom.includes(".") || initialTo.includes(".") ? 0.001 : 1;
 const form = ref({
   title: props.todo?.title ?? "",
   description: props.todo?.description ?? "",
@@ -38,12 +39,16 @@ function save() {
 
   const values = form.value;
   const title = values.title.trim();
-  const from = props.todo && values.date_from === initialFrom
-    ? fromApiDate(props.todo.date_from)
-    : parseDateTimeInput(values.date_from);
-  const to = props.todo && values.date_to === initialTo
-    ? fromApiDate(props.todo.date_to)
-    : parseDateTimeInput(values.date_to);
+  let from = parseDateTimeInput(values.date_from, dates?.date_from);
+  let to = parseDateTimeInput(values.date_to, dates?.date_to);
+
+  if (values.date_from === values.date_to) {
+    if (values.date_from !== initialFrom) {
+      from = to;
+    } else if (values.date_to !== initialTo) {
+      to = from;
+    }
+  }
 
   errors.value = {};
 
@@ -119,6 +124,7 @@ function save() {
             id="todo-from"
             v-model="form.date_from"
             type="datetime-local"
+            :step="timeStep"
             required
             :disabled="busy"
             :aria-invalid="Boolean(errors.date_from)"
@@ -134,6 +140,7 @@ function save() {
             id="todo-to"
             v-model="form.date_to"
             type="datetime-local"
+            :step="timeStep"
             required
             :disabled="busy"
             :aria-invalid="Boolean(errors.date_to)"

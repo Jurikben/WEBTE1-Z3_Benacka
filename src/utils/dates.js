@@ -9,16 +9,29 @@ export function formatDate(iso) {
   });
 }
 
+function normalizeDateTimeInput(value) {
+  const [dateTime, fraction = ""] = value.split(".");
+  const digits = fraction.replace(/0+$/, "");
+  if (digits) return `${dateTime}.${digits}`;
+
+  return dateTime.replace(/(T\d{2}:\d{2}):00$/, "$1");
+}
+
 export function toDateTimeInput(isoOrDate) {
   const date = fromApiDate(isoOrDate);
   const localTime = date.getTime() - date.getTimezoneOffset() * 60_000;
-  return new Date(localTime).toISOString().slice(0, 16);
+  return normalizeDateTimeInput(new Date(localTime).toISOString().slice(0, -1));
 }
 
-export function parseDateTimeInput(value) {
+export function parseDateTimeInput(value, original) {
+  const normalized = normalizeDateTimeInput(value);
+  if (original && toDateTimeInput(original) === normalized) {
+    return fromApiDate(original);
+  }
+
   const date = new Date(value);
 
-  if (Number.isNaN(date.getTime()) || toDateTimeInput(date) !== value) {
+  if (Number.isNaN(date.getTime()) || toDateTimeInput(date) !== normalized) {
     return null;
   }
 
