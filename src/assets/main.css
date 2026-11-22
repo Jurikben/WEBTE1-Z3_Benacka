@@ -1,0 +1,151 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #1d2939;
+  background: #f4f6fa;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-width {
+  width: min(100% - 2rem, 64rem);
+  margin-inline: auto;
+}
+
+.site-header {
+  color: #fff;
+  background: #233b62;
+  padding: 1rem 0;
+}
+
+h1, h2, h3 {
+  line-height: 1.25;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+main {
+  flex: 1;
+  padding-block: 1.5rem 2rem;
+}
+
+.student-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d5deeb;
+  border-radius: 0.5rem;
+}
+
+.student-form .form-field {
+  flex: 1 1 14rem;
+}
+
+.student-form button {
+  margin-top: 1.75rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+label {
+  font-weight: 600;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+input:not([type="checkbox"]), select, textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.45rem 0.6rem;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #8798af;
+  border-radius: 0.35rem;
+}
+
+button {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #285ba4;
+  border-radius: 0.35rem;
+  background: #285ba4;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:not(:disabled):hover {
+  background: #214b86;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 2px solid #1874c4;
+  outline-offset: 2px;
+}
+
+.field-error {
+  margin-block: 0.25rem;
+  color: #9c2424;
+  overflow-wrap: anywhere;
+}
+
+.todo-list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.todo-card {
+  min-width: 0;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d5deeb;
+  border-radius: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.todo-card h3, .todo-card p {
+  margin: 0 0 0.5rem;
+}
+
+.site-footer {
+  padding-block: 1rem;
+  border-top: 1px solid #d5deeb;
+  color: #42526a;
+}
+
+@media (max-width: 36rem) {
+  .student-form button {
+    margin-top: 0;
+  }
+}
