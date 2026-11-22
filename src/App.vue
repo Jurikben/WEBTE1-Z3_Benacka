@@ -1,5 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
+import TodoCalendar from "./components/TodoCalendar.vue";
+import TodoDetails from "./components/TodoDetails.vue";
 import TodoForm from "./components/TodoForm.vue";
 import TodoList from "./components/TodoList.vue";
 import {
@@ -16,9 +18,12 @@ const nameError = ref("");
 const error = ref("");
 const message = ref("");
 const form = ref(null);
+const view = ref("list");
+const selectedId = ref(null);
 
 const busy = computed(() => Boolean(pending.value));
 const canCreate = computed(() => todos.value.length < TODO_LIMIT);
+const selectedTodo = computed(() => todos.value.find((todo) => todo.id === selectedId.value));
 
 async function runRequest(status, action) {
   if (busy.value) return;
@@ -53,6 +58,7 @@ function loadTodos() {
     todos.value = await getTodos(identifier);
     student.value = identifier;
     name.value = identifier;
+    if (view.value === "about") view.value = "list";
     message.value = "Úlohy boli načítané.";
   });
 }
@@ -78,11 +84,31 @@ function openCreate(initialDates = null) {
 }
 
 function openEdit(todo) {
+  if (selectedTodo.value) {
+    closeDetails();
+    error.value = "";
+    message.value = "";
+    form.value = { todo, initialDates: null };
+    return;
+  }
+
   runRequest("Načítavam úlohu…", async () => {
     const current = await getTodo(student.value, todo.id);
     replaceTodo(current);
     form.value = { todo: current, initialDates: null };
   });
+}
+
+function openDetails(id) {
+  runRequest("Načítavam úlohu…", async () => {
+    const current = await getTodo(student.value, id);
+    replaceTodo(current);
+    selectedId.value = current.id;
+  });
+}
+
+function closeDetails() {
+  selectedId.value = null;
 }
 
 function closeForm() {
@@ -120,6 +146,7 @@ function removeTodo(todo) {
   runRequest("Odstraňujem úlohu…", async () => {
     await deleteTodo(student.value, todo.id);
     todos.value = todos.value.filter((item) => item.id !== todo.id);
+    closeDetails();
     message.value = "Úloha bola odstránená.";
   });
 }
@@ -150,6 +177,18 @@ function reset() {
   <header class="site-header">
     <div class="page-width">
       <h1>Môj TODO List</h1>
+      <nav class="site-nav" aria-label="Hlavná navigácia">
+        <button type="button" :aria-pressed="view === 'list'" @click="view = 'list'">
+          Zoznam úloh
+        </button>
+        <button type="button" :aria-pressed="view === 'calendar'" :disabled="!student"
+          @click="view = 'calendar'">
+          Kalendár
+        </button>
+        <button type="button" :aria-pressed="view === 'about'" @click="view = 'about'">
+          O projekte
+        </button>
+      </nav>
     </div>
   </header>
 
@@ -165,13 +204,13 @@ function reset() {
       <button type="submit" :disabled="busy">Načítať úlohy</button>
     </form>
 
-    <div v-if="!form && (pending || error || message)" class="feedback">
+    <div v-if="!form && !selectedTodo && (pending || error || message)" class="feedback">
       <p v-if="pending" role="status">{{ pending }}</p>
       <p v-if="error" class="field-error" role="alert">{{ error }}</p>
       <p v-if="message" role="status">{{ message }}</p>
     </div>
 
-    <template v-if="student">
+    <template v-if="student && view !== 'about'">
       <div class="list-actions">
         <p>Zoznam pre <strong>{{ student }}</strong></p>
         <button type="button" class="button-secondary" :disabled="busy" @click="reset">
@@ -181,9 +220,36 @@ function reset() {
       <p v-if="!canCreate" class="field-error" role="status">
         Dosiahli ste limit 50 úloh. Pred pridaním jednu úlohu odstráňte.
       </p>
-      <TodoList :key="student" :todos="todos" :busy="busy" :can-create="canCreate"
-        @create="openCreate" @edit="openEdit" @remove="removeTodo" @toggle="toggleTodo" />
     </template>
+
+    <TodoList v-if="student" v-show="view === 'list'" :key="student" :todos="todos"
+      :busy="busy" :can-create="canCreate" @create="openCreate" @edit="openEdit"
+      @remove="removeTodo" @toggle="toggleTodo" />
+
+    <section v-if="student && view === 'calendar'" class="calendar-panel" aria-labelledby="calendar-title">
+      <div class="section-heading">
+        <h2 id="calendar-title">Kalendár</h2>
+        <button type="button" :disabled="busy || !canCreate" @click="openCreate()">Pridať úlohu</button>
+      </div>
+      <TodoCalendar :todos="todos" :busy="busy" :can-create="canCreate"
+        @open="openDetails" @create="openCreate" />
+    </section>
+
+    <section v-if="view === 'about'" class="about-project" aria-labelledby="about-title">
+      <h2 id="about-title">O projekte</h2>
+      <p>Môj TODO List je školský projekt na správu osobných úloh. Úlohy sa ukladajú
+        na školskom serveri a zobrazujú v zozname aj v kalendári.</p>
+      <ul>
+        <li>HTML, CSS a JavaScript</li>
+        <li><a href="https://vuejs.org/">Vue 3</a> a <a href="https://vite.dev/">Vite</a></li>
+        <li><a href="https://fullcalendar.io/">FullCalendar</a> na zobrazenie kalendára</li>
+        <li>Fetch API na komunikáciu so školským REST API</li>
+      </ul>
+    </section>
+
+    <TodoDetails v-if="selectedTodo" :todo="selectedTodo" :busy="busy" :pending="pending"
+      :error="error" :message="message" @close="closeDetails" @edit="openEdit"
+      @remove="removeTodo" @toggle="toggleTodo" />
 
     <TodoForm v-if="form" :todo="form.todo" :initial-dates="form.initialDates" :busy="busy"
       :error="error" @close="closeForm" @save="saveTodo" />

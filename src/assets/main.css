@@ -39,6 +39,23 @@ h1 {
   font-size: 1.75rem;
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.site-nav button {
+  background: transparent;
+  border-color: #8297b9;
+}
+
+.site-nav button[aria-pressed="true"], .site-nav button:not(:disabled):hover {
+  color: #233b62;
+  background: #fff;
+}
+
 main {
   flex: 1;
   padding-block: 1.5rem 2rem;
@@ -244,6 +261,7 @@ button:disabled {
   background: #fff;
   border: 1px solid #8798af;
   border-radius: 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .form-dialog::backdrop {
@@ -270,6 +288,30 @@ button:disabled {
   resize: vertical;
 }
 
+.calendar-panel, .about-project {
+  min-width: 0;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d5deeb;
+  border-radius: 0.5rem;
+}
+
+.calendar-panel .section-heading {
+  margin-bottom: 1rem;
+}
+
+.about-project {
+  margin-top: 1rem;
+}
+
+.about-project h2 {
+  margin-top: 0;
+}
+
+.about-project a {
+  color: #254f8d;
+}
+
 .site-footer {
   padding-block: 1rem;
   border-top: 1px solid #d5deeb;
@@ -283,5 +325,9 @@ button:disabled {
 
   .todo-filters, .form-dates {
     grid-template-columns: 1fr;
+  }
+
+  .calendar-panel {
+    padding: 0.5rem;
   }
 }
